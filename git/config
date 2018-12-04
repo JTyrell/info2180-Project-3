@@ -1,0 +1,8 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote "origin"]
+	url = https://github.com/KlzRijkk0707/info2180-project3.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
