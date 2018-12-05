@@ -1,4 +1,7 @@
-
+<?php
+    session_start();
+    $_SESSION['visits']++;
+?>
 <!DOCTYPE html> 
 <html> 
     <!-- PUT COMMENTS ON THE CHANGES MADE PLEASE SO EVERYBODY CAN OVAZ WHATS TAKING PLACE IN THE CODE-->

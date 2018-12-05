@@ -34,9 +34,9 @@ CREATE TABLE `users` (
 
 ) ;
 
-INSERT INTO users (user_id, firstname, lastname, e_mail, telephone, password, date_joined) VALUES (1, 'Rijkaard', 'Harrison', 'admin@hireme.com', '876-123-4567', md5('password123'), DATE('2018/11/28'));
-INSERT INTO users (user_id, firstname, lastname, e_mail, telephone, password, date_joined) VALUES (2, 'Chantay', 'Whyte', 'cwt@test.com', '876-258-3698', md5('password456'), DATE('2018/11/28'));
-INSERT INTO users (user_id, firstname, lastname, e_mail, telephone, password, date_joined) VALUES (3, 'Jovoun', 'Tyrell', 'jjt@test.com', '876-159-1591', md5('password789'), DATE('2018/11/28'));
+INSERT INTO users (user_id, firstname, lastname, e_mail, telephone, password, date_joined) VALUES (1, 'Rijkaard', 'Harrison', 'admin@hireme.com', '876-123-4567', md5('Password123'), DATE('2018/11/28'));
+INSERT INTO users (user_id, firstname, lastname, e_mail, telephone, password, date_joined) VALUES (2, 'Chantay', 'Whyte', 'cwt@test.com', '876-258-3698', md5('Password456'), DATE('2018/11/28'));
+INSERT INTO users (user_id, firstname, lastname, e_mail, telephone, password, date_joined) VALUES (3, 'Jovoun', 'Tyrell', 'jjt@test.com', '876-159-1591', md5('Password789'), DATE('2018/11/28'));
 
 
 
@@ -50,7 +50,7 @@ DROP TABLE IF EXISTS `jobs`;
 
 CREATE TABLE `jobs` (
 
-  `job_id` int(11) NOT NULL auto_increment,
+  `jobId` int(11) NOT NULL auto_increment,
 
   `job_title` char(35) NOT NULL default '',
   
@@ -64,9 +64,18 @@ CREATE TABLE `jobs` (
 
   `date_posted` TIMESTAMP default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
 
-  PRIMARY KEY  (`job_id`)
+  PRIMARY KEY (`jobId`)
 
 );
+
+
+INSERT INTO jobs (jobId, job_title, job_description, category, company_name, company_location, date_posted) VALUES (1, 'Product Marketing Manager','Market our products','Sales and Marketing','Jamaica Gleaner','kingston, Jamaica',  DATE("14/04/2018"));
+INSERT INTO jobs (jobId, job_title, job_description, category, company_name, company_location, date_posted) VALUES (2, 'Software Engineer','Create software we need','Programming','UWI-MITS', 'UWI MONA,Jamaica',  DATE("13/06/2018"));
+INSERT INTO jobs (jobId, job_title, job_description, category, company_name, company_location, date_posted) VALUES (3, 'Business Analyst-Scrum Master','provide competent services','Business and Management','NCB', 'St.Andrew, Jamaica', DATE("25/07/2018"));
+INSERT INTO jobs (jobId, job_title, job_description, category, company_name, company_location, date_posted) VALUES (4, 'UX/UI Designer','update UI in our systems','Design','Jamaica Yellow Pages','Kingston, Jamaica', DATE("12/10/2018"));
+INSERT INTO jobs (jobId, job_title, job_description, category, company_name, company_location, date_posted) VALUES (5, 'Director customer support', 'provide customer service to disgruntled students','Customer Support','UWI-Bursary','UWI MONA,Jamaica', DATE("10/10/2018"));
+INSERT INTO jobs (jobId, job_title, job_description, category, company_name, company_location, date_posted) VALUES (6, 'Senior Systems Engineer', 'upgrade amd manage company programs','DevOps and Sysadmin','Sagicor Bank','St.Andrew, Jamaica', DATE("10/10/2018"));
+INSERT INTO jobs (jobId, job_title, job_description, category, company_name, company_location, date_posted) VALUES (7, 'Software Engineer','design or upgrade and maintain current software systems' ,'Programming','Base Camp','Portmore, Jamaica', DATE("18/10/2018"));
 
 
 --
@@ -81,15 +90,21 @@ CREATE TABLE `JobsAppliedFor` (
 
   `id` int(11) NOT NULL auto_increment,
 
-  `job_id` char(35) NOT NULL default '',
+  `job_id` int(35) NOT NULL default 0,
   
-  `user_id` char(35) NOT NULL default '',
+  `user_id` int(35) NOT NULL default 0,
   
   `date_applied` TIMESTAMP default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
 
   PRIMARY KEY  (`id`)
 
 );
+INSERT INTO JobsAppliedFor ( job_id, user_id, date_applied) VALUES (4, 2, DATE("04/08/2018"));
+INSERT INTO JobsAppliedFor ( job_id, user_id, date_applied) VALUES (7, 2, DATE("03/06/2018"));
+INSERT INTO JobsAppliedFor ( job_id, user_id, date_applied) VALUES (5, 1, DATE("14/05/2018"));
+INSERT INTO JobsAppliedFor ( job_id, user_id, date_applied) VALUES (2, 3, DATE("13/06/2018"));
+INSERT INTO JobsAppliedFor ( job_id, user_id, date_applied) VALUES (4, 1, DATE("10/04/2018"));
+INSERT INTO JobsAppliedFor ( job_id, user_id, date_applied) VALUES (5, 1, DATE("13/03/2018"));
 
 
 --
@@ -110,15 +125,17 @@ CREATE TABLE `availJobs` (
 
   `date_avail` TIMESTAMP default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
 
-  PRIMARY KEY  (`j_id`)
+  PRIMARY KEY  (`j_id`),
+  
+  FOREIGN KEY (`j_id`) REFERENCES jobs(`jobId`)
 
 ) ;
 
-INSERT INTO availJobs (j_id, company,job_title, category, date_avail) VALUES (1, 'Jamaica Gleaner','Product Marketing Manager','Sales and Marketing', DATE("2018/11/03"));
-INSERT INTO availJobs (j_id, company,job_title, category, date_avail) VALUES (2, 'UWI-MITS','Software Engineer', 'Programming', DATE("2018/11/02"));
-INSERT INTO availJobs (j_id, company,job_title, category, date_avail) VALUES (3, 'NCB','Business Analyst-Scrum Master','Business and Management', DATE("2018/11/01"));
-INSERT INTO availJobs (j_id, company,job_title, category, date_avail) VALUES (4, 'Jamaica Yellow Pages','UX/UI Designer','Design', DATE("2018/10/20"));
-INSERT INTO availJobs (j_id, company,job_title, category, date_avail) VALUES (5, 'UWI-Bursary','Director customer support', 'Customer Support', DATE("2018/10/20"));
-INSERT INTO availJobs (j_id, company,job_title, category, date_avail) VALUES (6, 'Sagicor Bank','Senior Systems Engineer', 'DevOps and Sysadmin', DATE("2018/10/20"));
-INSERT INTO availJobs (j_id, company,job_title, category, date_avail) VALUES (7, 'Base Camp','Software Engineer', 'Programming', DATE("2018/10/20"));
+INSERT INTO availJobs (j_id, company,job_title, category, date_avail) VALUES (1, 'Jamaica Gleaner','Product Marketing Manager','Sales and Marketing', DATE("14/04/2018"));
+INSERT INTO availJobs (j_id, company,job_title, category, date_avail) VALUES (2, 'UWI-MITS','Software Engineer', 'Programming', DATE("13/06/2018"));
+INSERT INTO availJobs (j_id, company,job_title, category, date_avail) VALUES (3, 'NCB','Business Analyst-Scrum Master','Business and Management', DATE("25/07/2018"));
+INSERT INTO availJobs (j_id, company,job_title, category, date_avail) VALUES (4, 'Jamaica Yellow Pages','UX/UI Designer','Design', DATE("12/10/2018"));
+INSERT INTO availJobs (j_id, company,job_title, category, date_avail) VALUES (5, 'UWI-Bursary','Director customer support', 'Customer Support', DATE("10/10/2018"));
+INSERT INTO availJobs (j_id, company,job_title, category, date_avail) VALUES (6, 'Sagicor Bank','Senior Systems Engineer', 'DevOps and Sysadmin', DATE("10/10/2018"));
+INSERT INTO availJobs (j_id, company,job_title, category, date_avail) VALUES (7, 'Base Camp','Software Engineer', 'Programming', DATE("18/10/2018"));
 

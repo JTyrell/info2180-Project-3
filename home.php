@@ -1,3 +1,7 @@
+<?php
+session_start();
+$_SESSION['visits']++;
+?>
 <!DOCTYPE html>
 <html>
     <!-- PUT COMMENTS ON THE CHANGES MADE PLEASE SO EVERYBODY CAN OVERS WHATS TAKING PLACE IN THE CODE-->
@@ -25,9 +29,10 @@
                 <div id='container2'>
                     
                     <div id='dash'>
-                        <h2>DASHBOARD
-                        <button id='post'>POST A JOB</button>
-                        </h2>
+                        <h2>DASHBOARD</h2>
+                        
+                        <button onclick="location.href='createNewJob.html'" id='post'>Post A Job</button>
+                        
                     </div>
                     
                     <div id='available'>
@@ -39,6 +44,11 @@
                             $dbname = 'HireMe';
                 
                             $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+                            
+                            $conn->exec("INSERT INTO availJobs (company, job_title, category, date_avail) VALUES IN(
+                                            SELECT company_name, job_title, category FROM jobs WHERE CURRENT_TIMESTAMP - date_posted < 2) ");
+
+                            
                             
                             $stmt = $conn->query("SELECT * FROM availJobs ");
                             $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -60,6 +70,33 @@
                     
                     <div id='applied'>
                         <h3>Jobs Applied for</h3>
+                       <?php
+                            $host = getenv('IP');
+                            $username = getenv('C9_USER');
+                            $password = '';
+                            $dbname = 'HireMe';
+                
+                            $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+                            
+                            $stmt = $conn->query("SELECT * FROM jobs WHERE jobId IN (SELECT job_id FROM JobsAppliedFor WHERE user_id = 2 )");
+                            
+                            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                            
+                            echo '<table style="width:100%; text-align:left; border-collapse:collapse;">';
+                            echo '<tr style="background-color:#e6e1de">';
+                            echo '<th>'.'Company'. '</th>';
+                            echo '<th>'.'Job Title'. '</th>';
+                            echo '<th>'.'Category'. '</th>';
+                            echo '<th>'.'Date'. '</th>';
+                            echo '</tr>';
+                            foreach ($results as $row) {
+                                echo '<tr>'.'<td>'.$row['company_name'].'</td>'. '<td>'.$row['job_title'].'</td>'.'<td>'.$row['category'].'</td>'.'<td>'.$row['date_posted'].'</td>'.'</tr>';
+                            }
+                            echo '</table>';
+                            
+                        ?> 
+                        
+                        
                     </div> <!--end of applied div-->
                 </div><!--end of container2-->
             </div> <!-- end of container div-->   

@@ -1,6 +1,7 @@
 <?php
 
 session_start();
+$_SESSION['visits']++;
 $host = getenv('IP');
 $username = getenv('C9_USER');
 $password = '';
@@ -14,14 +15,15 @@ $dbname = 'HireMe';
 $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
 
 $email = $_REQUEST["name"]; // retrieve the email
-$pwrd = md5( $_REQUEST["pwrd"]); // retrieve password and has it immediately
+$pwrd =  $_REQUEST["pwrd"]; // retrieve password and has it immediately
 
-$pwrd_patt ="/[a-zA-Z]+[0-9]+/";
+$pwrd_patt ="/^(.{0,7}|[^0-9]*|[^A-Z]*|[^a-z]*)$/"; // this is gonna match anything that does not meet the requirement
 $email_patt ="/[a-zA-Z]+@[a-zA-Z]+\.[a-zA-Z]{3}$/";
 
-if (preg_match($pwrd_patt,$pwrd) && preg_match($email_patt,$email)) {
+
+if (!(preg_match($pwrd_patt,$pwrd)) && preg_match($email_patt,$email)) {
     
-    $stmt = $conn->query("SELECT firstname FROM users WHERE e_mail='$email' AND password='$pwrd'");
+    $stmt = $conn->query("SELECT firstname FROM users WHERE e_mail='$email' AND password = md5('$pwrd')");
     $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     if(empty($results) ){    

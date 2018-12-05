@@ -1,5 +1,8 @@
 <?php
 
+
+session_start();
+$_SESSION['visits']++;
 // function used to get plaintext from url
 function test_input($data) {
   $data = trim($data);
@@ -20,11 +23,11 @@ $Job_location = test_input($_REQUEST["location"]);
 
 $resp = 'false';
 
-var_dump($_REQUEST);
-var_dump($_POST);
-var_dump($_GET);
+//var_dump($_REQUEST);
+//var_dump($_POST);
+//var_dump($_GET);
 
-if (empty($_REQUEST["title"])) {
+if (empty($Job_title)) {
   $Job_titleErr = "Title is required";
   echo $Job_titleErr;
 } else if(!preg_match("/^[a-zA-Z ]+/",$Job_title)){
@@ -34,7 +37,7 @@ if (empty($_REQUEST["title"])) {
   $resp = 'true';
 }
 
-if (empty($_REQUEST["description"])) {
+if (empty($Job_description)) {
   $Job_descriptionErr = "description is required";
   echo $Job_descriptionErr;
 
@@ -46,14 +49,14 @@ if (empty($_REQUEST["description"])) {
   $resp = 'true';
 }
 
-if ($_REQUEST["category"] =="blank") {
+if ($category =="blank") {
   $categoryErr = "select a category";
   echo $categoryErr; 
 }else{
   $resp = 'true';
 }
 
-if (empty($_REQUEST["company"])) {
+if (empty($company)) {
   $companyErr = "company is required";
   echo $companyErr;
 } else if(!preg_match("/^[a-zA-Z0-9]+$/",$company)){
@@ -63,11 +66,10 @@ if (empty($_REQUEST["company"])) {
   $resp = 'true';
 }
 
-if (empty($_REQUEST["location"])) {
+if (empty($Job_location)) {
   $Job_locationErr = "location is required";
   echo $Job_locationErr;
-  
-} else if(!preg_match("/[a-zA-Z ]+,[a-zA-Z ]+/",$Job_location)){
+}else if(!preg_match("/[a-zA-Z ]+,[a-zA-Z ]+/",$Job_location)){
     $Job_locationErr = "LOC: Only letters and white space allowed<br/>";    // check if Job description only contains letters and whitespace
     echo $Job_locationErr;
 }else{
@@ -83,16 +85,16 @@ $dbname = 'HireMe';
 
 $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
 
-$stmt = $conn->exec("INSERT INTO jobs(job_title, job_description, category, company_name, company_location, date_posted) 
-                             VALUES( $Job_title, $Job_description, $category, $company, $Job_location, CURRENT_TIMESTAMP");
+$conn->exec("INSERT INTO jobs (job_title, job_description, category, company_name, company_location, date_posted) 
+                    VALUES ('$Job_title','$Job_description','$category','$company','$Job_location', CURRENT_TIMESTAMP)");
 
+$stmt = $conn->query("SELECT * FROM jobs WHERE job_title ='$Job_title'");
 
-$stmt = $conn->query("SELECT 1 FROM jobs WHERE job_title='$Job_title'");
 $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-if(empty($results) ){    
+if(empty($results) ){
+    var_dump($results);
     $resp = 'false'; //false if data was not added properly
-    echo $resp;
 }
 //---------------------------------------------------------------//
 //echo true after data has been addd to database

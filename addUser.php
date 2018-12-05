@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+$_SESSION['visits']++;
 //functions 
 function test_input($data) {
   $data = trim($data);
@@ -9,9 +11,9 @@ function test_input($data) {
 }
 //END FUNCTIONS
 
-var_dump($_REQUEST);
-var_dump($_POST);
-var_dump($_GET);
+//var_dump($_REQUEST);
+//var_dump($_POST);
+//var_dump($_GET);
 
 // VARIABLE DECLARATIONS//
 $FnameErr = $LnameErr = $emailErr = $passErr = $teleErr = "";
@@ -19,13 +21,15 @@ $FnameErr = $LnameErr = $emailErr = $passErr = $teleErr = "";
 $Fname = test_input($_REQUEST["Fname"]);
 $Lname = test_input($_REQUEST["Lname"]);
 $password = test_input($_REQUEST["password"]);
+$email = test_input($_REQUEST["email"]);
+$phone = test_input($_REQUEST["phone"]);
 
 $resp = false;
 //END OF VARIABLE DECLARATIONS//
 
 
 //INPUT VALIDATION//
-if (empty($_REQUEST["Fname"])) {
+if (empty($Fname)) {
   $FnameErr = "First name is required";
   echo $FnameErr;
 } else if(!preg_match("/^[a-zA-Z ]+$/",$Fname)){
@@ -35,7 +39,7 @@ if (empty($_REQUEST["Fname"])) {
   $resp = true;
 }
 
-if (empty($_REQUEST["Lname"])) {
+if (empty($Lname)) {
   $LnameErr = "Last name is required";
   echo $LnameErr;
 }else if(!preg_match("/^[a-zA-Z ]+$/",$Lname)){
@@ -45,7 +49,7 @@ if (empty($_REQUEST["Lname"])) {
   $resp = true;
 }
 
-if (empty($_REQUEST["email"])) {
+if (empty($email)) {
   $emailErr = "Email is required";
   echo $emailErr;
 } else if(!preg_match("/[a-zA-Z]+@[a-zA-Z]+\.[a-zA-Z]{3}$/",$email)){
@@ -55,20 +59,20 @@ if (empty($_REQUEST["email"])) {
   $resp = true;
 }
 
-if (empty($_REQUEST["password"])) {
+if (empty($password)) {
   $passErr = "password is required";
   echo $passErr;
-} else if(!preg_match("/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d){8}$/",$password)){  //checking the password with the regex
+} else if(preg_match("/^(.{0,7}|[^0-9]*|[^A-Z]*|[^a-z]*)$/",$password)){  //checking the password with the regex
     $passErr = "Atleast one number, lower case letter and capital letter should be used";
     echo $passErr;
 }else{
   $resp = true;
 }
   
-if (empty($_REQUEST["telephone"])) {
+if (empty($phone)) {
   $telErr = "telephone is required";
   echo $telErr;
-} else if(!preg_match("/^[0-9]{3}-[0-9]{3}-[0-9]{4}$/", $telephone)){
+} else if(!preg_match("/^[0-9]{3}-[0-9]{3}-[0-9]{4}$/", $phone)){
     $telErr = "invalid telephone number,try entering '-' between the numbers or the 3 digit area code";
     echo $telErr;
 }else{
@@ -86,11 +90,11 @@ $dbname = 'HireMe';
 
 $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
 
-$stmt = $conn->exec("INSERT INTO users(firstname, lastname, e_mail, telephone, password, date_joined) 
-                            VALUES ('$Fname', '$Lname', '$email', '$telephone', md5('$password'), CURRENT_TIMESTAMP)");
+$conn->exec("INSERT INTO users (firstname, lastname, e_mail, telephone, password, date_joined) 
+                            VALUES ('$Fname', '$Lname', '$email', '$phone', md5('$password'), CURRENT_TIMESTAMP)"); //CURRENT TIMESTAMP is gonna take the current date
 
 
-$stmt = $conn->query("SELECT 1 FROM users WHERE email ='$email'");
+$stmt = $conn->query("SELECT * FROM users WHERE e_mail ='$email'");
 $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 if(empty($results) ){    
